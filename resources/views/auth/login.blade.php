@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
+<meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Admin Login</title>
     <!-- Add Bootstrap CSS link here -->
@@ -18,8 +18,8 @@
 
             <div class="col-xl-5 col-lg-10 col-md-9 mt-5">
 
-                <div class="card o-hidden border-0 shadow-lg my-5">
-                    <div class="card-body p-0">
+                <div class="shadow-lg my-5">
+                    <div class="p-0">
                         <!-- Nested Row within Card Body -->
                         <div class="center">
                                  <div class="p-5">
@@ -85,6 +85,13 @@
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <style>
+         body {
+            background-image: url('/backend/img/back.jpg');
+            background-size: cover;
+            background-repeat: no-repeat;
+        }
+    </style>
 </body>
 
 </html>

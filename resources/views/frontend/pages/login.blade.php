@@ -1,15 +1,18 @@
+
 @extends('frontend.layouts.sign')
 
 @section('title', 'Login')
 
 @section('content')
-    <section class="shop login section">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-lg-6 col-md-8 col-12">
-                    <div class="card p-4">
-                        <h2 class="text-center mb-4">Login</h2>
-                       
+    <section class="shop login section" style="background-image: url('/backend/img/back.jpg'); background-size: cover;">
+        <div class="row justify-content-center">
+        <div class="col-xl-5 col-lg-5 col-md-5 mt-5">
+                <div class="shadow-lg my-5">
+                <div class="p-0">
+                    <!-- Nested Row within Card Body -->
+                    <div class="center">
+                        <div class="p-5">
+                            <h2 class="text-center mb-4">Login</h2>
                         <!-- Form -->
                         <form class="form" method="post" action="{{ route('login.submit') }}">
                             @csrf
@@ -35,13 +38,14 @@
                                 <button class="btn btn-primary" type="submit">Login</button>
                                 <a href="{{ route('register.form') }}" class="btn btn-secondary">Register</a>
                             </div>
-                            <div class="text-center mt-3">
-                                @if (Route::has('password.request'))
-                                    <a class="lost-pass" href="{{ route('password.reset') }}">
-                                        Forgot Password?
-                                    </a>
-                                @endif
-                            </div>
+                       {{-- <div class="text-center mt-3">
+    @if (Route::has('password.request'))
+        <a class="lost-pass" href="{{ route('password.reset') }}">
+            Forgot Password?
+        </a>
+    @endif
+</div> --}}
+
                         </form>
                         <!--/ End Form -->
                     </div>
@@ -62,6 +66,24 @@
         /* Center the form */
         .shop.login .card {
             margin-top: 70px; /* Adjust as needed */
+        }
+         /* Custom styles specific to this page */
+         .shop.login .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        /* Center the form */
+        .shop.login .card {
+            margin-top: 70px; /* Adjust as needed */
+        }
+
+        /* Additional styles for the background */
+        .shop.login.section {
+            background-repeat: no-repeat;
+            background-position: center center;
+            background-attachment: fixed; /* Optional: If you want the background to be fixed */
+            height: 100vh; /* Set height to 100% of viewport height */
         }
     </style>
 

@@ -85,11 +85,6 @@
                   <td>
     <div style="display: flex; align-items: center;">
         <a href="{{ route('product.edit', $product->id) }}" class="btn btn-primary btn-sm mr-1" style="height: 30px; width: 30px; border-radius: 50%;" data-toggle="tooltip" title="Edit" data-placement="bottom"><i class="fas fa-edit"></i></a>
-        <form method="POST" action="{{ route('product.destroy', [$product->id]) }}">
-            @csrf
-            @method('delete')
-            <button class="btn btn-danger btn-sm dltBtn" data-id="{{ $product->id }}" style="height: 30px; width: 30px; border-radius: 50%;" data-toggle="tooltip" data-placement="bottom" title="Delete"><i class="fas fa-trash-alt"></i></button>
-        </form>
     </div>
 </td>
 

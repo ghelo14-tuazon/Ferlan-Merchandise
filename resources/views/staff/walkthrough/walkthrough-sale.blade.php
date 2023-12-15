@@ -49,31 +49,56 @@
 @endif
 
 
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>Product ID</th>
-                    <th>Name</th>
-                       <th>Price</th>
-                    <th>Stock</th>
+        <!-- Table with Search Bar -->
+<div class="table-responsive">
+    <input type="text" id="productSearch" class="form-control mb-2" placeholder="Search Product Name">
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Product ID</th>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Stock</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($products as $product)
+                <tr class="product-row">
+                    <td>{{ $product->id }}</td>
+                    <td>{{ $product->title }}</td>
+                    <td>{{ $product->price }}</td>
+                    <td>{{ $product->stock }}</td>
                 </tr>
-            </thead>
-            <tbody>
-                @foreach($products as $product)
-                    <tr>
-                        <td>{{ $product->id }}</td>
-                        <td>{{ $product->title }}</td>
-                         <td>{{ $product->price }}</td>
-                        <td>{{ $product->stock }}</td>
-                    </tr>
-                @endforeach
-            </tbody>
-        </table>
+            @endforeach
+        </tbody>
+    </table>
+</div>
+
+<script>
+    // Search Bar Functionality
+    document.getElementById('productSearch').addEventListener('input', function () {
+        const searchQuery = this.value.toLowerCase();
+        const rows = document.querySelectorAll('.product-row');
+
+        rows.forEach(function (row) {
+            const productName = row.querySelector('td:nth-child(2)').innerText.toLowerCase();
+
+            if (productName.includes(searchQuery)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
+</script>
+
    <div class="d-flex justify-content-center mt-4">
             {{ $products->links("pagination::bootstrap-4") }}
         </div>
         <!-- Sale Form -->
-      <!-- Sale Form -->
+  <!-- Sale Form -->
+<!-- resources/views/sale-form.blade.php -->
+
 <h2 class="mt-4">Sale Form</h2>
 <form method="post" action="{{ url('/process-sale') }}" class="mb-5">
     @csrf
@@ -100,26 +125,15 @@
 
         productField.innerHTML = `
             <div class="form-group">
-                <label for="product_ids[]">Product ID:</label>
-                <input type="number" name="product_ids[]" class="form-control" required>
-            </div>
-            <div class="form-group">
-                <label for="quantities[]">Quantity:</label>
-                <input type="number" name="quantities[]" class="form-control" required>
-            </div>
-            <div class="form-group">
-                <label for="sizes[]">Size:</label>
-                <select name="sizes[]" class="form-control" required>
-                    <option value="small">Small</option>
-                    <option value="medium">Medium</option>
-                    <option value="large">Large</option>
-                </select>
+                <label for="product_info">Product Info (format: product_id @ quantity @size(ex: small, medium, large, 41, 42, 43):</label>
+                <input type="text" name="product_info[]" class="form-control" required>
             </div>
         `;
 
         container.appendChild(productField);
     }
 </script>
+
 <!-- Add this to your HTML file -->
 <div class="modal fade" id="purchaseModal" tabindex="-1" role="dialog" aria-labelledby="purchaseModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">

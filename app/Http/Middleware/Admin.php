@@ -23,4 +23,5 @@ class Admin
             return redirect()->route($request->user()->role);
         }
     }
+    
 }

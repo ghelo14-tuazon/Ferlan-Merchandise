@@ -8,6 +8,8 @@ use App\Models\Wishlist;
 use App\Models\Cart;
 use Illuminate\Support\Str;
 use Helper;
+use Illuminate\Support\Facades\DB; // Add this line
+
 class CartController extends Controller
 {
     protected $product=null;
@@ -69,7 +71,7 @@ class CartController extends Controller
         $request->validate([
             'slug' => 'required',
             'quant' => 'required',
-            'size' => 'required|in:Small,Medium,Large', 
+            'size' => 'required|in:Small,Medium,Large,41,42,43', 
          
         ]);
     
@@ -174,4 +176,5 @@ class CartController extends Controller
      
         return view('frontend.pages.checkout');
     }
+   
 }

@@ -256,121 +256,158 @@ public function StockHistory($id)
     return view('staff.product.stock_history', compact('product', 'stockHistory'));
 }
     
-    
-    public function processSale(Request $request)
-    {
-        $productIdsArray = $request->input('product_ids');
-        $quantitiesArray = $request->input('quantities');
-        $sizesArray = $request->input('sizes');
-        $successMessage = 'Sales successfully processed.';
-    
-        $orderNumber = uniqid(); // Generate a unique order number (replace this with your logic)
-    
-        $errorFlag = false;
-        $productDetails = [];
-        $totalOrderPrice = 0;
-        $insufficientStock = false; // Initialize the flag for insufficient stock
-    
-        foreach ($productIdsArray as $key => $productIdString) {
-            $productIds = explode(',', $productIdString);
-    
-            foreach ($productIds as $productId) {
-                $product = Product::find($productId);
-    
-                // Check if the product exists
-                if (!$product) {
-                    $errorFlag = true;
-                    session()->flash('error', 'Product not found for ID: ' . $productId);
-                    break 2; // Exit both loops
-                }
-    
-                // Check if the quantity is valid
-                $quantity = $quantitiesArray[$key];
-                if ($quantity <= 0 || $quantity > $product->stock) {
-                    $errorFlag = true;
-                    $insufficientStock = true; // Set the flag for insufficient stock
-                    session()->flash('error', 'Invalid quantity for product: ' . $product->title);
-                    break 2; // Exit both loops
-                }
-    
-                $size = $sizesArray[$key];
-    
-                // Check if the specified size is valid
-                $validSizes = ['small', 'medium', 'large']; // lowercase as per your column naming
-                if (!in_array($size, $validSizes)) {
-                    $errorFlag = true;
-                    session()->flash('error', 'Invalid size specified for product: ' . $product->title);
-                    break 2; // Exit both loops
-                }
-    
-                // Check if deducting stock would result in a negative value
-                $column = 'stock_' . $size;
-                if ($product->$column - $quantity < 0) {
-                    $errorFlag = true;
-                    $insufficientStock = true; // Set the flag for insufficient stock
-                    session()->flash('error', 'Insufficient stock for product: ' . $product->title);
-                    break 2; // Exit both loops
-                }
-    
-                $totalPrice = $product->price * $quantity;
-                $totalOrderPrice += $totalPrice;
-    
-                // Deduct stock based on size
-                $product->$column -= $quantity;
-    
-                // Deduct from general stock column
-                $product->stock -= $quantity;
-    
-                $product->sold_stock += $quantity;
-                $product->save();
-    
-                // Save the walk-in sale with order number and size
-                WalkinSale::create([
-                    'product_id' => $product->id,
-                    'quantity' => $quantity,
-                    'total_price' => $totalPrice,
-                    'order_number' => $orderNumber,
-                    'size' => $size,
-                ]);
-    
-                // Store product details for the receipt
-                $productDetails[] = [
-                    'title' => $product->title,
-                    'quantity' => $quantity,
-                    'total' => $totalPrice,
-                    'size' => $size,
-                ];
+public function processSale(Request $request)
+{
+    $productInfoArray = $request->input('product_info');
+    $successMessage = 'Sales successfully processed.';
+
+    // Check if the product info array is null or empty
+    if ($productInfoArray === null || empty($productInfoArray)) {
+        return redirect()->back()->with('error', 'Invalid product info data');
+    }
+
+    $orderNumber = uniqid(); // Generate a unique order number (replace this with your logic)
+
+    $errorFlag = false;
+    $productDetails = [];
+    $totalOrderPrice = 0;
+    $insufficientStock = false; // Initialize the flag for insufficient stock
+
+    foreach ($productInfoArray as $productInfo) {
+        // Split product info into product_id, quantity, and size
+        $info = explode('@', $productInfo);
+
+        // Check if the expected number of elements is present
+        if (count($info) !== 3) {
+            $errorFlag = true;
+            session()->flash('error', 'Invalid product info format');
+            break; // Exit the loop
+        }
+
+        list($productId, $quantity, $size) = $info;
+
+        // Find the product by ID
+        $product = Product::find($productId);
+
+        // Check if the product exists
+        if (!$product) {
+            $errorFlag = true;
+            session()->flash('error', 'Product not found for ID: ' . $productId);
+            break; // Exit the loop
+        }
+
+        // Check if the quantity is valid
+        if ($quantity <= 0 || $quantity > $product->stock) {
+            $errorFlag = true;
+            $insufficientStock = true; // Set the flag for insufficient stock
+            session()->flash('error', 'Invalid quantity for product: ' . $product->title);
+            break; // Exit the loop
+        }
+        
+
+        // Check if the specified size is valid
+        $validSizesForCat15 = ['41', '42', '43'];
+        $validSizesForOtherCats = ['small', 'medium', 'large'];
+        
+        // Assuming $product is an instance of your product model and has a 'cat_id' property
+        if ($product->cat_id == 15) {
+            // If cat_id is 15, only sizes '41', '42', and '43' are valid
+            if (!in_array($size, $validSizesForCat15)) {
+                $errorFlag = true;
+                session()->flash('error', 'Invalid size specified for product: ' . $product->title);
+                break; // Exit the loop
+            }
+        } else {
+            // If cat_id is not 15, only sizes 'small', 'medium', and 'large' are valid
+            if (!in_array($size, $validSizesForOtherCats)) {
+                $errorFlag = true;
+                session()->flash('error', 'Invalid size specified for product: ' . $product->title);
+                break; // Exit the loop
             }
         }
-    
-        // Check for insufficient stock and display alert if needed
-        if ($insufficientStock) {
-            return redirect()->back()->with('insufficientStock', true);
+        
+        
+        
+
+        // Check if deducting stock would result in a negative value
+        if ($size == '41') {
+            $column = 'stock_small';
+        } elseif ($size == '42') {
+            $column = 'stock_medium';
+        } elseif ($size == '43') {
+            $column = 'stock_large';
+        } else {
+            $column = 'stock_' . $size;
         }
-    
-        if ($errorFlag) {
-            return redirect()->back();
+
+        if ($product->$column - $quantity < 0) {
+            $errorFlag = true;
+            $insufficientStock = true; // Set the flag for insufficient stock
+            session()->flash('error', 'Insufficient stock for product: ' . $product->title);
+            break; // Exit the loop
         }
-    
-        // Generate PDF receipt with product details and totalOrderPrice
-        $pdf = PDF::loadView('receipt', [
-            'successMessage' => $successMessage,
-            'productDetails' => $productDetails,
-            'totalOrderPrice' => $totalOrderPrice,
-            'orderNumber' => $orderNumber,
+
+        $totalPrice = $product->price * $quantity;
+        $totalOrderPrice += $totalPrice;
+
+        // Deduct stock based on size
+        $product->$column -= $quantity;
+
+        // Deduct from general stock column
+        $product->stock -= $quantity;
+
+        $product->sold_stock += $quantity;
+        $product->save();
+
+        // Save the walk-in sale with order number and size
+        WalkinSale::create([
+            'product_id' => $product->id,
+            'quantity' => $quantity,
+            'total_price' => $totalPrice,
+            'order_number' => $orderNumber,
+            'size' => $size,
         ]);
-    
-        // Save the PDF file with order number
-        $pdfFileName = 'receipt_order_' . $orderNumber . '.pdf';
-        $pdfPath = storage_path('app/receipts/' . $pdfFileName);
-        $pdf->save($pdfPath);
-    
-        // Store PDF path, order number, and product details in the session
-        session(['pdf_path' => $pdfPath, 'order_number' => $orderNumber, 'product_details' => $productDetails]);
-    
-        return redirect()->back()->with('success', $successMessage)->with('showModal', true);
+
+        // Store product details for the receipt
+        $productDetails[] = [
+            'title' => $product->title,
+            'quantity' => $quantity,
+            'total' => $totalPrice,
+            'size' => $size,
+        ];
     }
-    
+
+    // Check for insufficient stock and display alert if needed
+    if ($insufficientStock) {
+        return redirect()->back()->with('insufficientStock', true);
+    }
+
+    if ($errorFlag) {
+        return redirect()->back();
+    }
+
+    // Generate PDF receipt with product details and totalOrderPrice
+    $pdf = PDF::loadView('receipt', [
+        'successMessage' => $successMessage,
+        'productDetails' => $productDetails,
+        'totalOrderPrice' => $totalOrderPrice,
+        'orderNumber' => $orderNumber,
+    ]);
+
+    // Save the PDF file with order number
+    $pdfFileName = 'receipt_order_' . $orderNumber . '.pdf';
+    $pdfPath = storage_path('app/receipts/' . $pdfFileName);
+    $pdf->save($pdfPath);
+
+    // Store PDF path, order number, and product details in the session
+    session(['pdf_path' => $pdfPath, 'order_number' => $orderNumber, 'product_details' => $productDetails]);
+
+    return redirect()->back()->with('success', $successMessage)->with('showModal', true);
+}
+
+
+
+
 public function walkthroughSaleView()
 {
     $products = Product::paginate(4); // Adjust the number per page as needed

@@ -98,17 +98,23 @@
 
 											<!--/ End Size -->
 											<!-- Product Buy -->
-											<div class="product-buy">
 												<form action="{{route('single-add-to-cart')}}" method="POST">
 													@csrf 
 													  <div class="size">
-        <label for="size">Size:</label>
-        <select name="size" id="size">
-            <option value="Small">Small</option>
-            <option value="Medium">Medium</option>
-            <option value="Large">Large</option>
-        </select>
-    </div>
+          <label for="size">Size:</label>
+            <select name="size" id="size">
+                @if($product_detail->cat_info['slug'] == 'footwear')
+                    <option value="41">41</option>
+                    <option value="42">42</option>
+                    <option value="43">43</option>
+                @else
+                    <option value="Small">Small</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Large">Large</option>
+                @endif
+            </select>
+    </div>	<div class="product-buy">
+										
 													<div class="quantity">
 														<h6>Quantity :</h6>
 														<!-- Input Order -->

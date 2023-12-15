@@ -123,7 +123,17 @@ private function dailySalesReport()
     
         return response()->json(['year' => $yearlySalesData]);
     }
-    
+    public function myname()
+
+    {
+       return view('myname');
+    }
+    public function processForm(Request $request)
+    {
+        $name = $request-> input ('name');
+        $age = $request-> input ('age');
+        $address = $request-> input ('address');
+    }
 
     
 }

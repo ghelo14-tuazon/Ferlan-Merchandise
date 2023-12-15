@@ -4,11 +4,13 @@
 @section('title', 'Register')
 
 @section('content')
-    <section class="shop login section">
+<section class="shop login section" style="background-image: url('/backend/img/back.jpg'); background-size: cover;height:100vh;">
         <div class="container">
             <div class="row justify-content-center align-items-center">
-                <div class="col-lg-6 col-md-8 col-12 my-auto mx-auto">
-                    <div class="card p-4">
+            <div class="col-xl-5 col-lg-10 col-md-9 mt-5">
+
+<div class="shadow-lg my-5">
+    <div class="p-0">
                         <h2 class="text-center mb-4">Register</h2>
                         
 
@@ -60,12 +62,13 @@
 @push('styles')
     <style>
         /* Custom styles specific to this page */
-        .shop.login .card {
-            border: none;
-            border-radius: 15px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-        }
-         .shop.login .card {
+      .shop.login .card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    margin-top: 70px; /* Adjust as needed */
+}
+op.login .card {
             margin-top: 70px; /* Adjust as needed */
         }
     </style>

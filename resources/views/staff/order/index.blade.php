@@ -8,8 +8,22 @@
             @include('backend.layouts.notification')
          </div>
      </div>
-    <div class="card-header py-3">
-      <h6 class="m-0 font-weight-bold text-primary float-left">Order Lists</h6>
+     <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary float-left">Order Lists</h6>
+        <div class="float-right">
+            <label for="orderStatusFilter">Filter by Status:</label>
+            <select id="orderStatusFilter" class="form-control">
+                <option value="">All</option>
+                <option value="new">New</option>
+                <option value="process">Process</option>
+                <option value="ready">Ready</option>
+
+                <option value="shipout">ShipOut</option>
+                <option value="delivered">Delivered</option>
+                 <option value="cancel">Cancel</option>
+                <!-- Add more options if needed -->
+            </select>
+        </div>
     </div>
     <div class="card-body">
       <div class="table-responsive">
@@ -43,15 +57,19 @@
                     <td>@foreach($shipping_charge as $data) Php {{number_format($data,2)}} @endforeach</td>
                     <td>Php {{number_format($order->total_amount,2)}}</td>
                     <td>
-                        @if($order->status=='new')
-                          <span class="badge badge-primary">{{$order->status}}</span>
-                        @elseif($order->status=='process')
-                          <span class="badge badge-warning">{{$order->status}}</span>
-                        @elseif($order->status=='delivered')
-                          <span class="badge badge-success">{{$order->status}}</span>
-                        @else
-                          <span class="badge badge-danger">{{$order->status}}</span>
-                        @endif
+                      @if($order->status=='new')
+    <span class="badge badge-primary">{{$order->status}}</span>
+@elseif($order->status=='process')
+    <span class="badge badge-warning">{{$order->status}}</span>
+@elseif($order->status=='delivered')
+    <span class="badge badge-success">{{$order->status}}</span>
+@elseif($order->status=='ready')
+    <span class="badge badge-info">{{$order->status}}</span> <!-- Use 'info' class for blue color -->
+@elseif($order->status=='shipout')
+    <span class="badge badge-secondary">{{$order->status}}</span> <!-- Use 'secondary' class for a different color -->
+@else
+    <span class="badge badge-danger">{{$order->status}}</span>
+@endif
                     </td>
                   <td class="d-flex">
                   <a href="{{ route('receipt.generate', $order->id) }}" class="btn btn-info btn-sm mr-1" style="height: 30px; width: 30px; border-radius: 50%;" data-toggle="tooltip" title="Generate Receipt" data-placement="bottom"><i class="fas fa-receipt"></i></a>
@@ -59,11 +77,7 @@
 
     <a href="{{ route('staff.order.edit', $order->id) }}" class="btn btn-primary btn-sm mr-1" style="height: 30px; width: 30px; border-radius: 50%;" data-toggle="tooltip" title="Edit" data-placement="bottom"><i class="fas fa-edit"></i></a>
 
-    <form method="POST" action="{{ route('order.destroy', [$order->id]) }}">
-        @csrf 
-        @method('delete')
-        <button class="btn btn-danger btn-sm dltBtn" data-id="{{ $order->id }}" style="height: 30px; width: 30px; border-radius: 50%;" data-toggle="tooltip" data-placement="bottom" title="Delete"><i class="fas fa-trash-alt"></i></button>
-    </form>
+   
 </td>
 
                 </tr>  
@@ -146,6 +160,20 @@
                     }
                 });
           })
+          
       })
+      
   </script>
+  
+  <script>  $('#orderStatusFilter').change(function () {
+        var status = $(this).val();
+        var table = $('#order-dataTable').DataTable();
+
+        if (status === "") {
+            table.columns(7).search("").draw(); // Assuming the status column is at index 7
+        } else {
+            table.columns(7).search(status).draw();
+        }
+    });
+    </script>
 @endpush

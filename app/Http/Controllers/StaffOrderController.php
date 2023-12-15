@@ -200,7 +200,7 @@ class StaffOrderController extends Controller
         $order = Order::find($id);
     
         $this->validate($request, [
-            'status' => 'required|in:new,process,delivered,cancel'
+            'status' => 'required|in:new,process,delivered,cancel,ready,shipout'
         ]);
     
         $data = $request->all();
@@ -221,11 +221,18 @@ class StaffOrderController extends Controller
                     case 'Large':
                         $product->stock_large -= $cart->quantity;
                         break;
+                    case '41':
+                        $product->stock_small -= $cart->quantity;
+                        break;
+                    case '42':
+                        $product->stock_medium -= $cart->quantity;
+                        break;
+                    case '43':
+                        $product->stock_large -= $cart->quantity;
+                        break;
                     // Add more cases if you have other size options
     
                     // Deduct stock for the general 'stock' column
-                   
-                       
                 }
     
                 // Update sold_stock for all sizes
@@ -243,8 +250,7 @@ class StaffOrderController extends Controller
         } else {
             request()->session()->flash('error', 'Error while updating order');
         }
-    
-        return redirect()->route('staff.order.index');
+        return redirect()->route('order.index');
     }
     
     /**
@@ -287,6 +293,16 @@ class StaffOrderController extends Controller
             }
             elseif($order->status=="process"){
                 request()->session()->flash('success','Your order is under processing please wait.');
+                return redirect()->route('home');
+    
+            }
+            elseif($order->status=="ready"){
+                request()->session()->flash('success','The product is prepared and ready for swift delivery to your doorstep!');
+                return redirect()->route('home');
+    
+            }
+            elseif($order->status=="shipout"){
+                request()->session()->flash('success','Your product is currently out for delivery, making its way to your doorstep. Anticipate its arrival shortly!');
                 return redirect()->route('home');
     
             }

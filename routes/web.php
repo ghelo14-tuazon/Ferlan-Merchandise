@@ -24,6 +24,7 @@
     use App\Http\Controllers\HomeController;
     use \UniSharp\LaravelFilemanager\Lfm;
     use App\Http\Controllers\Auth\LoginStaffController;
+    
 
     /*
     |--------------------------------------------------------------------------
@@ -138,7 +139,7 @@ Route::get('/reset-notifications', 'StaffNotificationController@resetUnreadNotif
     Route::get('user/register', [FrontendController::class, 'register'])->name('register.form');
     Route::post('user/register', [FrontendController::class, 'registerSubmit'])->name('register.submit');
 // Reset password
-    Route::post('password-reset', [FrontendController::class, 'showResetForm'])->name('password.reset');
+    Route::GET('password-reset', [FrontendController::class, 'showResetForm'])->name('password.reset');
 // Socialite
     Route::get('login/{provider}/', [LoginController::class, 'redirect'])->name('login.redirect');
     Route::get('login/{provider}/callback/', [LoginController::class, 'Callback'])->name('login.callback');
@@ -335,3 +336,9 @@ Route::get('/yearly-sales', [SalesController::class, 'yearly_sales'])->name('yea
 // routes/web.php
 Route::delete('/staff/inquiry/{id}/delete', 'ProductInquiryController@deleteInquiry')->name('staff.inquiry.delete');
 Route::get('storage-link',[AdminController::class,'storageLink'])->name('storage.link');
+Route::get('/my-name', [SalesController::class, 'myname'])->name('myname');
+Route::post('/my-name', 'SalesController@processForm');
+// routes/web.php
+// routes/web.php
+
+Route::post('/user/order/cancel', 'OrderController@ajaxCancel')->name('user.order.ajaxCancel');

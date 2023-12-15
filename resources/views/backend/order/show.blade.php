@@ -33,24 +33,23 @@
     <td>{{$order->quantity}}</td>
     <td>Php {{ optional($order->shipping)->price }}</td>
     <td>Php{{ number_format($order->total_amount, 2) }}</td>
-    <td>
-                @if($order->status=='new')
-                  <span class="badge badge-primary">{{$order->status}}</span>
-                @elseif($order->status=='process')
-                  <span class="badge badge-warning">{{$order->status}}</span>
-                @elseif($order->status=='delivered')
-                  <span class="badge badge-success">{{$order->status}}</span>
-                @else
-                  <span class="badge badge-danger">{{$order->status}}</span>
-                @endif
+    <td>  @if($order->status=='new')
+    <span class="badge badge-primary">{{$order->status}}</span>
+@elseif($order->status=='process')
+    <span class="badge badge-warning">{{$order->status}}</span>
+@elseif($order->status=='delivered')
+    <span class="badge badge-success">{{$order->status}}</span>
+@elseif($order->status=='ready')
+    <span class="badge badge-info">{{$order->status}}</span> <!-- Use 'info' class for blue color -->
+@elseif($order->status=='shipout')
+    <span class="badge badge-secondary">{{$order->status}}</span> <!-- Use 'secondary' class for a different color -->
+@else
+    <span class="badge badge-danger">{{$order->status}}</span>
+@endif
             </td>
             <td class = "d-flex">
                 <a href="{{route('order.edit',$order->id)}}" class="btn btn-primary btn-sm float-left mr-1" style="height:30px; width:30px;border-radius:50%" data-toggle="tooltip" title="edit" data-placement="bottom"><i class="fas fa-edit"></i></a>
-                <form method="POST" action="{{route('order.destroy',[$order->id])}}">
-                  @csrf
-                  @method('delete')
-                      <button class="btn btn-danger btn-sm dltBtn" data-id={{$order->id}} style="height:30px; width:30px;border-radius:50%" data-toggle="tooltip" data-placement="bottom" title="Delete"><i class="fas fa-trash-alt"></i></button>
-                </form>
+               
             </td>
 
         </tr>

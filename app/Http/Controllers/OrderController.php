@@ -169,55 +169,63 @@ class OrderController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
-    {
-        $order = Order::find($id);
-    
-        $this->validate($request, [
-            'status' => 'required|in:new,process,delivered,cancel'
-        ]);
-    
-        $data = $request->all();
-    
-        if ($request->status == 'delivered') {
-            foreach ($order->cart as $cart) {
-                $product = $cart->product;
-    
-                // Deduct stock based on size
-                $size = $cart->size;
-                switch ($size) {
-                    case 'Small':
-                        $product->stock_small -= $cart->quantity;
-                        break;
-                    case 'Medium':
-                        $product->stock_medium -= $cart->quantity;
-                        break;
-                    case 'Large':
-                        $product->stock_large -= $cart->quantity;
-                        break;
-                    // Add more cases if you have other size options
-    
-                    // Deduct stock for the general 'stock' column
-                   
-                       
-                }
-    
-                // Update sold_stock for all sizes
-                $product->sold_stock += $cart->quantity;
-                $product->stock -= $cart->quantity;
-    
-                $product->save();
+{
+    $order = Order::find($id);
+
+    $this->validate($request, [
+        'status' => 'required|in:new,process,delivered,cancel,ready,shipout'
+    ]);
+
+    $data = $request->all();
+
+    if ($request->status == 'delivered') {
+        foreach ($order->cart as $cart) {
+            $product = $cart->product;
+
+            // Deduct stock based on size
+            $size = $cart->size;
+            switch ($size) {
+                case 'Small':
+                    $product->stock_small -= $cart->quantity;
+                    break;
+                case 'Medium':
+                    $product->stock_medium -= $cart->quantity;
+                    break;
+                case 'Large':
+                    $product->stock_large -= $cart->quantity;
+                    break;
+                case '41':
+                    $product->stock_small -= $cart->quantity;
+                    break;
+                case '42':
+                    $product->stock_medium -= $cart->quantity;
+                    break;
+                case '43':
+                    $product->stock_large -= $cart->quantity;
+                    break;
+                // Add more cases if you have other size options
+
+                // Deduct stock for the general 'stock' column
             }
+
+            // Update sold_stock for all sizes
+            $product->sold_stock += $cart->quantity;
+            $product->stock -= $cart->quantity;
+
+            $product->save();
         }
-    
-        $status = $order->fill($data)->save();
-    
-        if ($status) {
-            request()->session()->flash('success', 'Successfully updated order');
-        } else {
-            request()->session()->flash('error', 'Error while updating order');
-        }
-        return redirect()->route('order.index');
     }
+
+    $status = $order->fill($data)->save();
+
+    if ($status) {
+        request()->session()->flash('success', 'Successfully updated order');
+    } else {
+        request()->session()->flash('error', 'Error while updating order');
+    }
+    return redirect()->route('order.index');
+}
+
     
     /**
      * Remove the specified resource from storage.
@@ -259,6 +267,16 @@ class OrderController extends Controller
             }
             elseif($order->status=="process"){
                 request()->session()->flash('success','Your order is under processing please wait.');
+                return redirect()->route('home');
+    
+            }
+            elseif($order->status=="ready"){
+                request()->session()->flash('success','The product is prepared and ready for swift delivery to your doorstep!');
+                return redirect()->route('home');
+    
+            }
+            elseif($order->status=="shipout"){
+                request()->session()->flash('success','Your product is currently out for delivery, making its way to your doorstep. Anticipate its arrival shortly!');
                 return redirect()->route('home');
     
             }
@@ -314,4 +332,29 @@ class OrderController extends Controller
         }
         return $data;
     }
-   }
+    
+
+  
+    public function ajaxCancel(Request $request)
+    {
+        $orderId = $request->input('orderId');
+    
+        $order = Order::find($orderId);
+    
+        if ($order) {
+            // Check if the order is not in a cancellable state
+            if (in_array($order->status, ['process', 'ready', 'shipout', 'delivered','cancel'])) {
+                return response()->json(['error' => 'Cannot cancel an order in the current state.'], 400);
+            }
+    
+            // Update the status to 'cancel'
+            $order->status = 'cancel';
+            $order->save();
+    
+            return response()->json(['success' => true]);
+        }
+    
+        return response()->json(['error' => 'Order not found.'], 404);
+    }
+    
+       }

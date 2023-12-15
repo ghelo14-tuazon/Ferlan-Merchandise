@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Product;
+use App\Models\Order;
 use App\Models\ProductReview;
 use App\Notifications\StatusNotification;
 use App\User;
@@ -18,31 +19,41 @@ class ProductReviewUserController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request, $productSlug)
-
     {
         // Validate the request data
         $this->validate($request, [
             'rate' => 'required|numeric|min:1',
             'review' => 'required|string',
         ]);
-
+    
         // Find the product by its slug
         $product = Product::where('slug', $productSlug)->first();
-
+    
         // Check if the product exists
         if (!$product) {
             return redirect()->back()->with('error', 'Product not found!');
         }
+    
+        // Check if the user has purchased the product
+        $hasPurchased = User::find(auth()->user()->id)->orders()
+        ->whereHas('products', function ($query) use ($product) {
+            $query->where('product_id', $product->id);
+        })
+        ->exists();
 
+        if (!$hasPurchased) {
+            return redirect()->back()->with('error', 'You can only review products you have purchased.');
+        }
+    
         // Check if the user has already reviewed the product
         $existingReview = ProductReview::where('product_id', $product->id)
             ->where('user_id', auth()->user()->id)
             ->first();
-
+    
         if ($existingReview) {
             return redirect()->back()->with('error', 'You have already reviewed this product!');
         }
-
+    
         // Create a new review
         $review = new ProductReview();
         $review->user_id = auth()->user()->id;
@@ -51,7 +62,7 @@ class ProductReviewUserController extends Controller
         $review->review = $request->input('review');
         $review->status = $request->input('status', 'approved'); // Default to pending if not provided
         $review->save();
-
+    
         // Notify admin about the new review
         $user = User::where('role', 'admin')->get();
         $details = [
@@ -60,9 +71,10 @@ class ProductReviewUserController extends Controller
             'fas' => 'fa-star',
         ];
         Notification::send($user, new StatusNotification($details));
-
+    
         return redirect()->back()->with('success', 'Thank you for your review! It will be visible after approval.');
     }
+    
    
 // ProductDetail.php
 public function deleteReview($id)

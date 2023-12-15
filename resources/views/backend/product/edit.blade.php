@@ -79,22 +79,28 @@
           <span class="text-danger">{{$message}}</span>
           @enderror
         </div>
-        <div class="form-group">
-          <label for="size">Size</label>
-          <select name="size[]" class="form-control selectpicker"  multiple data-live-search="true">
-              <option value="">--Select any size--</option>
-              @foreach($items as $item)              
-                @php 
-                $data=explode(',',$item->size);
-                // dd($data);
-                @endphp
-              <option value="S"  @if( in_array( "S",$data ) ) selected @endif>Small</option>
-              <option value="M"  @if( in_array( "M",$data ) ) selected @endif>Medium</option>
-              <option value="L"  @if( in_array( "L",$data ) ) selected @endif>Large</option>
-          
-              @endforeach
-          </select>
-        </div>
+     <div class="form-group">
+    <label for="size">Size</label>
+    <select name="size[]" class="form-control selectpicker" multiple data-live-search="true">
+        <option value="">--Select any size--</option>
+        
+        @foreach($items as $item)
+            @php 
+                $data = explode(',', $item->size);
+            @endphp
+
+            <option value="S" @if(in_array("S", $data)) selected @endif>Small</option>
+            <option value="M" @if(in_array("M", $data)) selected @endif>Medium</option>
+            <option value="L" @if(in_array("L", $data)) selected @endif>Large</option>
+
+            <!-- Add the following lines for sizes 41, 42, and 43 -->
+            <option value="41" @if(in_array("41", $data)) selected @endif>Size 41</option>
+            <option value="42" @if(in_array("42", $data)) selected @endif>Size 42</option>
+            <option value="43" @if(in_array("43", $data)) selected @endif>Size 43</option>
+        @endforeach
+    </select>
+</div>
+
        
 
         <div class="form-group">

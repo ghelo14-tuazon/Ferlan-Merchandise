@@ -9,8 +9,23 @@
          </div>
      </div>
     <div class="card-header py-3">
-      <h6 class="m-0 font-weight-bold text-primary float-left">Order Lists</h6>
+        <h6 class="m-0 font-weight-bold text-primary float-left">Order Lists</h6>
+        <div class="float-right">
+            <label for="orderStatusFilter">Filter by Status:</label>
+            <select id="orderStatusFilter" class="form-control">
+                <option value="">All</option>
+                <option value="new">New</option>
+                <option value="process">Process</option>
+                <option value="ready">Ready</option>
+
+                <option value="shipout">ShipOut</option>
+                <option value="delivered">Delivered</option>
+                 <option value="cancel">Cancel</option>
+                <!-- Add more options if needed -->
+            </select>
+        </div>
     </div>
+
     <div class="card-body">
       <div class="table-responsive">
         @if(count($orders)>0)
@@ -43,28 +58,27 @@
                     <td>@foreach($shipping_charge as $data) Php {{number_format($data,2)}} @endforeach</td>
                     <td>Php {{number_format($order->total_amount,2)}}</td>
                     <td>
-                        @if($order->status=='new')
-                          <span class="badge badge-primary">{{$order->status}}</span>
-                        @elseif($order->status=='process')
-                          <span class="badge badge-warning">{{$order->status}}</span>
-                        @elseif($order->status=='delivered')
-                          <span class="badge badge-success">{{$order->status}}</span>
-                        @else
-                          <span class="badge badge-danger">{{$order->status}}</span>
-                        @endif
+                   @if($order->status=='new')
+    <span class="badge badge-primary">{{$order->status}}</span>
+@elseif($order->status=='process')
+    <span class="badge badge-warning">{{$order->status}}</span>
+@elseif($order->status=='delivered')
+    <span class="badge badge-success">{{$order->status}}</span>
+@elseif($order->status=='ready')
+    <span class="badge badge-info">{{$order->status}}</span> <!-- Use 'info' class for blue color -->
+@elseif($order->status=='shipout')
+    <span class="badge badge-secondary">{{$order->status}}</span> <!-- Use 'secondary' class for a different color -->
+@else
+    <span class="badge badge-danger">{{$order->status}}</span>
+@endif
+
+
                     </td>
                   <td class="d-flex">
     <a href="{{ route('order.show', $order->id) }}" class="btn btn-warning btn-sm mr-1" style="height: 30px; width: 30px; border-radius: 50%;" data-toggle="tooltip" title="View" data-placement="bottom"><i class="fas fa-eye"></i></a>
 
     <a href="{{ route('order.edit', $order->id) }}" class="btn btn-primary btn-sm mr-1" style="height: 30px; width: 30px; border-radius: 50%;" data-toggle="tooltip" title="Edit" data-placement="bottom"><i class="fas fa-edit"></i></a>
-
-    <form method="POST" action="{{ route('order.destroy', [$order->id]) }}">
-        @csrf 
-        @method('delete')
-        <button class="btn btn-danger btn-sm dltBtn" data-id="{{ $order->id }}" style="height: 30px; width: 30px; border-radius: 50%;" data-toggle="tooltip" data-placement="bottom" title="Delete"><i class="fas fa-trash-alt"></i></button>
-    </form>
 </td>
-
                 </tr>  
             @endforeach
           </tbody>
@@ -89,7 +103,6 @@
 @endpush
 
 @push('scripts')
-
   <!-- Page level plugins -->
   <script src="{{asset('backend/vendor/datatables/jquery.dataTables.min.js')}}"></script>
   <script src="{{asset('backend/vendor/datatables/dataTables.bootstrap4.min.js')}}"></script>
@@ -98,7 +111,6 @@
   <!-- Page level custom scripts -->
   <script src="{{asset('backend/js/demo/datatables-demo.js')}}"></script>
   <script>
-      
      $('#order-dataTable').DataTable({
     "order": [
         [0, 'desc'] // Assuming the first column (ID) represents the order you want
@@ -110,39 +122,45 @@
         }
     ]
 });
-        // Sweet alert
 
-        function deleteData(id){
-            
+$(document).ready(function(){
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         }
-  </script>
-  <script>
-      $(document).ready(function(){
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    });
+
+    $('.dltBtn').click(function(e){
+        var form=$(this).closest('form');
+        var dataID=$(this).data('id');
+        // alert(dataID);
+        e.preventDefault();
+        swal({
+            title: "Are you sure?",
+            text: "Warning: Once deleted you cannot recover the data!!",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+        .then((willDelete) => {
+            if (willDelete) {
+                form.submit();
+            } else {
+                
             }
         });
-          $('.dltBtn').click(function(e){
-            var form=$(this).closest('form');
-              var dataID=$(this).data('id');
-              // alert(dataID);
-              e.preventDefault();
-              swal({
-                    title: "Are you sure?",
-                    text: "Warning: Once deleted you cannot recover the data!!",
-                    icon: "warning",
-                    buttons: true,
-                    dangerMode: true,
-                })
-                .then((willDelete) => {
-                    if (willDelete) {
-                       form.submit();
-                    } else {
-                       
-                    }
-                });
-          })
-      })
-  </script>
+    });
+
+    $('#orderStatusFilter').change(function () {
+        var status = $(this).val();
+        var table = $('#order-dataTable').DataTable();
+
+        if (status === "") {
+            table.columns(7).search("").draw(); // Assuming the status column is at index 7
+        } else {
+            table.columns(7).search(status).draw();
+        }
+    });
+});
+</script>
 @endpush

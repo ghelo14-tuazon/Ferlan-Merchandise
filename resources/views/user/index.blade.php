@@ -7,6 +7,7 @@
     <div class="d-sm-flex align-items-center justify-content-center mb-4" >
       <h1 class="h3 mb-0 text-gray-800">List of Orders</h1>
     </div>
+    
 
     <!-- Content Row -->
 
@@ -18,6 +19,7 @@
     ->paginate(10);
 
       @endphp
+      
       <!-- Order -->
       <div class="col-xl-12 col-lg-12">
         <table class="table table-bordered" id="order-dataTable" width="100%" cellspacing="0">
@@ -45,23 +47,26 @@
                     <td>{{$order->quantity}}</td>
                     <td>Php {{number_format($order->total_amount,2)}}</td>
                     <td>
-                        @if($order->status=='new')
-                          <span class="badge badge-primary">{{$order->status}}</span>
-                        @elseif($order->status=='process')
-                          <span class="badge badge-warning">{{$order->status}}</span>
-                        @elseif($order->status=='delivered')
-                          <span class="badge badge-success">{{$order->status}}</span>
-                        @else
-                          <span class="badge badge-danger">{{$order->status}}</span>
-                        @endif
+                       @if($order->status=='new')
+    <span class="badge badge-primary">{{$order->status}}</span>
+@elseif($order->status=='process')
+    <span class="badge badge-warning">{{$order->status}}</span>
+@elseif($order->status=='delivered')
+    <span class="badge badge-success">{{$order->status}}</span>
+@elseif($order->status=='ready')
+    <span class="badge badge-info">{{$order->status}}</span> <!-- Use 'info' class for blue color -->
+@elseif($order->status=='shipout')
+    <span class="badge badge-secondary">{{$order->status}}</span> <!-- Use 'secondary' class for a different color -->
+@else
+    <span class="badge badge-danger">{{$order->status}}</span>
+@endif
+
                     </td>
                     <td>
                         <a href="{{route('user.order.show',$order->id)}}" class="btn btn-primary btn-sm float-left mr-1" style="height:30px; width:30px;border-radius:50%" data-toggle="tooltip" title="view" data-placement="bottom"><i class="fas fa-eye"></i></a>
-                        <form method="POST" action="{{route('user.order.delete',[$order->id])}}">
-                          @csrf 
-                          @method('delete')
-                              <button class="btn btn-danger btn-sm dltBtn" data-id={{$order->id}} style="height:30px; width:30px;border-radius:50%" data-toggle="tooltip" data-placement="bottom" title="Delete"><i class="fas fa-trash-alt"></i></button>
-                        </form>
+                         <button class="btn btn-danger btn-sm cancel-btn" data-order-id="{{ $order->id }}" data-toggle="tooltip" title="Cancel" data-placement="bottom">
+        <i class="fas fa-times"></i>
+    </button>
                     </td>
                 </tr>  
               @endforeach
@@ -280,5 +285,47 @@ var myLineChart = new Chart(ctx, {
     })
 
 </script>
+    <script>
+        $(document).ready(function () {
+            $('.cancel-btn').click(function (e) {
+                e.preventDefault();
 
+                var orderId = $(this).data('order-id');
+
+                swal({
+                    title: "Are you sure?",
+                    text: "Once canceled, you cannot recover the order!",
+                    icon: "warning",
+                    buttons: true,
+                    dangerMode: true,
+                }).then((willCancel) => {
+                    if (willCancel) {
+                        $.ajax({
+                            type: 'POST',
+                            url: '{{ route('user.order.ajaxCancel') }}',
+                            data: {
+                                orderId: orderId,
+                                _token: '{{ csrf_token() }}',
+                            },
+                            success: function (response) {
+                                if (response.success) {
+                                    swal("Order canceled successfully.", {
+                                        icon: "success",
+                                    });
+                                    // Optionally, you can update the UI to reflect the canceled status
+                                } else {
+                                    swal("Error", "Failed to cancel the order.", "error");
+                                }
+                            },
+                            error: function (xhr, status, error) {
+                                console.error(xhr.responseText);
+                                swal("Error", "Failed to cancel the order.", "error");
+                            }
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+  
 @endpush

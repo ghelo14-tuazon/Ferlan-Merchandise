@@ -1,11 +1,21 @@
 @extends('layouts.app')
 
 @section('content')
+<body style="background-image: url('/backend/img/back.jpg'); background-size: cover;">
 
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
+<div class="row justify-content-center">
+
+            <div class="col-xl-5 col-lg-5 col-md-5 mt-5">
+
+                <div class="shadow-lg my-9">
+                    <div class="p-0">
+                        <!-- Nested Row within Card Body -->
+                        <div class="center">
+                                 <div class="p-5">
+                                    <div class="text-center">
+                                       
+                                    <h1 class="h2 mb-3">Staff</h1>
+
                 <div class="card-body">
                     <form method="POST" action="{{ route('staff.login') }}">
                         @csrf
@@ -31,7 +41,7 @@
                         </div>
 
                         <div class="form-group">
-                            <button type="submit" class="btn btn-primary">
+                            <button type="submit" class="btn btn-primary mt-5">
                                 {{ __('Login') }}
                             </button>
                         </div>
@@ -39,24 +49,4 @@
                 </div>
             </div>
         </div>
-    </div>
-</div>
-
-@push('scripts')
-    <script>
-        // Disable caching of the login page
-        $(document).ready(function () {
-            if (window.history && window.history.pushState) {
-                $(window).on('popstate', function () {
-                    window.history.pushState('forward', null, null);
-                    window.history.forward(1);
-                });
-            }
-        });
-
-        // Ensure the login form is cleared on page load
       
-    </script>
-@endpush
-
-@endsection

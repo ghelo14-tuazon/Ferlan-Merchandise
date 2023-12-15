@@ -43,15 +43,20 @@
     <td>Php {{ optional($order->shipping)->price }}</td>
     <td>Php{{ number_format($order->total_amount, 2) }}</td>
     <td>
-                @if($order->status=='new')
-                  <span class="badge badge-primary">{{$order->status}}</span>
-                @elseif($order->status=='process')
-                  <span class="badge badge-warning">{{$order->status}}</span>
-                @elseif($order->status=='delivered')
-                  <span class="badge badge-success">{{$order->status}}</span>
-                @else
-                  <span class="badge badge-danger">{{$order->status}}</span>
-                @endif
+               @if($order->status=='new')
+    <span class="badge badge-primary">{{$order->status}}</span>
+@elseif($order->status=='process')
+    <span class="badge badge-warning">{{$order->status}}</span>
+@elseif($order->status=='delivered')
+    <span class="badge badge-success">{{$order->status}}</span>
+@elseif($order->status=='ready')
+    <span class="badge badge-info">{{$order->status}}</span> <!-- Use 'info' class for blue color -->
+@elseif($order->status=='shipout')
+    <span class="badge badge-secondary">{{$order->status}}</span> <!-- Use 'secondary' class for a different color -->
+@else
+    <span class="badge badge-danger">{{$order->status}}</span>
+@endif
+
             </td>
            
         </tr>

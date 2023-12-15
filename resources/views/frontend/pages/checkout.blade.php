@@ -21,27 +21,39 @@
                                 <!-- Form -->
                                 <div class="row">
                                     <div class="col-lg-6 col-md-6 col-12">
-                                        <div class="form-group">
-                                            <label>First Name<span>*</span></label>
-                                            <input type="text" name="first_name" placeholder="" value="{{old('first_name')}}" value="{{old('first_name')}}">
-                                            @error('first_name')
-                                                <span class='text-danger'>{{$message}}</span>
-                                            @enderror
-                                        </div>
-                                    </div>
+    <div class="form-group">
+        <label>First Name<span>*</span></label>
+        @php
+            $fullName = auth()->user()->name;
+            $nameParts = explode(' ', $fullName);
+            $firstName = count($nameParts) > 0 ? $nameParts[0] : '';
+        @endphp
+        <input type="text" name="first_name" placeholder="" value="{{ old('first_name', $firstName) }}">
+        @error('first_name')
+            <span class='text-danger'>{{ $message }}</span>
+        @enderror
+    </div>
+</div>
+
                                     <div class="col-lg-6 col-md-6 col-12">
-                                        <div class="form-group">
-                                            <label>Last Name<span>*</span></label>
-                                            <input type="text" name="last_name" placeholder="" value="{{old('lat_name')}}">
-                                            @error('last_name')
-                                                <span class='text-danger'>{{$message}}</span>
-                                            @enderror
-                                        </div>
+                          <div class="form-group">
+    <label>Last Name<span>*</span></label>
+    @php
+        $fullName = auth()->user()->name;
+        $nameParts = explode(' ', $fullName);
+        $lastName = count($nameParts) > 1 ? $nameParts[1] : '';
+    @endphp
+    <input type="text" name="last_name" placeholder="" value="{{ $lastName }}">
+    @error('last_name')
+        <span class='text-danger'>{{ $message }}</span>
+    @enderror
+</div>
+
                                     </div>
                                     <div class="col-lg-6 col-md-6 col-12">
                                         <div class="form-group">
                                             <label>Email Address<span>*</span></label>
-                                            <input type="email" name="email" placeholder="" value="{{old('email')}}">
+                                            <input type="email" name="email" placeholder=""  value="{{ auth()->user()->email }}" >
                                             @error('email')
                                                 <span class='text-danger'>{{$message}}</span>
                                             @enderror

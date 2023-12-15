@@ -66,23 +66,42 @@
           @enderror
         </div>
 
-        <div class="form-group">
-          <label for="discount" class="col-form-label">Discount(%)</label>
-          <input id="discount" type="number" name="discount" min="0" max="100" placeholder="Enter discount"  value="{{old('discount')}}" class="form-control">
-          @error('discount')
-          <span class="text-danger">{{$message}}</span>
-          @enderror
-        </div>
-        <div class="form-group">
-          <label for="size">Size</label>
-          <select name="size[]" class="form-control selectpicker"  multiple data-live-search="true">
-              <option value="">--Select any size--</option>
-              <option value="S">Small (S)</option>
-              <option value="M">Medium (M)</option>
-              <option value="L">Large (L)</option>
-             
-          </select>
-        </div>
+       <div class="form-group">
+    <label for="size">Size</label>
+    <select name="size[]" id="size" class="form-control selectpicker" multiple data-live-search="true">
+        <option value="">--Select any size--</option>
+        <option value="S">Small (S)</option>
+        <option value="M">Medium (M)</option>
+        <option value="L">Large (L)</option>
+        <!-- Additional default sizes can be added here -->
+
+        <!-- Placeholder for footwear sizes, initially hidden -->
+        <optgroup id="footwearSizes" label="Footwear Sizes" style="display: none">
+            <option value="41">41</option>
+            <option value="42">42</option>
+            <option value="43">43</option>
+        </optgroup>
+    </select>
+</div>
+
+<script>
+    $('#cat_id').change(function(){
+        var cat_id = $(this).val();
+
+        // Check if the selected category is "footwear"
+        if(cat_id == 2) { // Assuming the category ID for "footwear" is 2, replace it with the actual ID
+            // If the selected category is "footwear", show the footwear sizes
+            $('#footwearSizes').css('display', 'block');
+        } else {
+            // If the selected category is not "footwear", hide the footwear sizes
+            $('#footwearSizes').css('display', 'none');
+        }
+        
+        // Refresh the selectpicker to reflect changes
+        $('.selectpicker').selectpicker('refresh');
+    });
+</script>
+
 
         
 
@@ -237,6 +256,7 @@
     }
   })
 </script>
+
 @endpush
 
 @endpush

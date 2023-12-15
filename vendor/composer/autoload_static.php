@@ -611,6 +611,7 @@ class ComposerStaticInita137f4beb571bb09d0859f42f021fb00
     );
 
     public static $classMap = array (
+        'App\\Console\\Commands\\CheckStockCommand' => __DIR__ . '/../..' . '/app/Console/Commands/CheckStockCommand.php',
         'App\\Console\\Kernel' => __DIR__ . '/../..' . '/app/Console/Kernel.php',
         'App\\Events\\MessageSent' => __DIR__ . '/../..' . '/app/Events/MessageSent.php',
         'App\\Exceptions\\Handler' => __DIR__ . '/../..' . '/app/Exceptions/Handler.php',
@@ -630,8 +631,10 @@ class ComposerStaticInita137f4beb571bb09d0859f42f021fb00
         'App\\Http\\Controllers\\HomeController' => __DIR__ . '/../..' . '/app/Http/Controllers/HomeController.php',
         'App\\Http\\Controllers\\NotificationController' => __DIR__ . '/../..' . '/app/Http/Controllers/NotificationController.php',
         'App\\Http\\Controllers\\OrderController' => __DIR__ . '/../..' . '/app/Http/Controllers/OrderController.php',
+        'App\\Http\\Controllers\\ProductController' => __DIR__ . '/../..' . '/app/Http/Controllers/ProductController.php',
         'App\\Http\\Controllers\\ProductInquiryController' => __DIR__ . '/../..' . '/app/Http/Controllers/ProductInquiryController.php',
         'App\\Http\\Controllers\\ProductReviewController' => __DIR__ . '/../..' . '/app/Http/Controllers/ProductReviewController.php',
+        'App\\Http\\Controllers\\ProductReviewUserController' => __DIR__ . '/../..' . '/app/Http/Controllers/ProductReviewUserController.php',
         'App\\Http\\Controllers\\ProductsController' => __DIR__ . '/../..' . '/app/Http/Controllers/ProductsController.php',
         'App\\Http\\Controllers\\SalesController' => __DIR__ . '/../..' . '/app/Http/Controllers/SalesController.php',
         'App\\Http\\Controllers\\SalesForecastController' => __DIR__ . '/../..' . '/app/Http/Controllers/SalesForecastController.php',
@@ -647,6 +650,7 @@ class ComposerStaticInita137f4beb571bb09d0859f42f021fb00
         'App\\Http\\Controllers\\StaffProductController' => __DIR__ . '/../..' . '/app/Http/Controllers/StaffProductController.php',
         'App\\Http\\Controllers\\StaffShippingController' => __DIR__ . '/../..' . '/app/Http/Controllers/StaffShippingController.php',
         'App\\Http\\Controllers\\UsersController' => __DIR__ . '/../..' . '/app/Http/Controllers/UsersController.php',
+        'App\\Http\\Controllers\\WalkinSaleController' => __DIR__ . '/../..' . '/app/Http/Controllers/WalkinSaleController.php',
         'App\\Http\\Controllers\\WishlistController' => __DIR__ . '/../..' . '/app/Http/Controllers/WishlistController.php',
         'App\\Http\\Kernel' => __DIR__ . '/../..' . '/app/Http/Kernel.php',
         'App\\Http\\Middleware\\Admin' => __DIR__ . '/../..' . '/app/Http/Middleware/Admin.php',
@@ -677,7 +681,9 @@ class ComposerStaticInita137f4beb571bb09d0859f42f021fb00
         'App\\Models\\Settings' => __DIR__ . '/../..' . '/app/Models/Settings.php',
         'App\\Models\\Shipping' => __DIR__ . '/../..' . '/app/Models/Shipping.php',
         'App\\Models\\StockHistory' => __DIR__ . '/../..' . '/app/Models/StockHistory.php',
+        'App\\Models\\WalkinSale' => __DIR__ . '/../..' . '/app/Models/WalkinSale.php',
         'App\\Models\\Wishlist' => __DIR__ . '/../..' . '/app/Models/Wishlist.php',
+        'App\\Models\\YearlySale' => __DIR__ . '/../..' . '/app/Models/YearlySale.php',
         'App\\Notifications\\StatusNotification' => __DIR__ . '/../..' . '/app/Notifications/StatusNotification.php',
         'App\\Policies\\StaffBannerPolicy' => __DIR__ . '/../..' . '/app/Policies/StaffBannerPolicy.php',
         'App\\Providers\\AppServiceProvider' => __DIR__ . '/../..' . '/app/Providers/AppServiceProvider.php',
